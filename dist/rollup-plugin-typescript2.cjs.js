@@ -25085,7 +25085,7 @@ function createFilter(context, pluginOptions, parsedConfig) {
     }
     context.debug(() => `included:\n${JSON.stringify(included, undefined, 4)}`);
     context.debug(() => `excluded:\n${JSON.stringify(excluded, undefined, 4)}`);
-    return pluginutils.createFilter(included, excluded);
+    return pluginutils.createFilter(included, excluded, { resolve: parsedConfig.options.rootDir });
 }
 
 function checkTsConfig(parsedConfig) {
@@ -27057,6 +27057,11 @@ const pLimit = concurrency => {
 		},
 		pendingCount: {
 			get: () => queue.length
+		},
+		clearQueue: {
+			value: () => {
+				queue.length = 0;
+			}
 		}
 	});
 
@@ -28933,7 +28938,7 @@ const checkPath = pth => {
 const processOptions = options => {
 	// https://github.com/sindresorhus/make-dir/issues/18
 	const defaults = {
-		mode: 0o777 & (~process.umask()),
+		mode: 0o777,
 		fs: fs__default['default']
 	};
 
